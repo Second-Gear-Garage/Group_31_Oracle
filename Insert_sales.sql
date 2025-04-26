@@ -33,7 +33,5 @@ VALUES (sales_seq.NEXTVAL, 9, 12, TO_DATE('2025-04-13', 'YYYY-MM-DD'));
 INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
 VALUES (sales_seq.NEXTVAL, 10, 13, TO_DATE('2025-04-12', 'YYYY-MM-DD'));
 
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 12, 15, TO_DATE('2025-04-11', 'YYYY-MM-DD'));
 
 COMMIT;
