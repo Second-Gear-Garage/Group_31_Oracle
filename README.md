@@ -89,3 +89,26 @@ WHERE EXTRACT(YEAR FROM s.SaleDate) = EXTRACT(YEAR FROM SYSDATE)
 GROUP BY e.EmployeeID, e.FirstName, e.LastName
 ORDER BY TotalSales DESC;
 ContributingContributions are welcome! If you'd like to contribute, please follow these steps:Fork the repository.Create a new branch (git checkout -b feature/your-feature-name).Make your changes.Commit your changes (git commit -am 'Add some feature').Push to the branch (git push origin feature/your-feature-name).Create a new Pull Request.Please ensure your code adheres to the existing style and includes relevant tests or documentation updates.License(Specify the license under which the project is released, e.g., MIT, Apache 2.0, or Proprietary).Example:This project is licensed under the MIT License - see the LICENSE.md file for details (if you have one).
+
+### SQL Import Information
+
+This is the list of exported tables, with their corresponding row count:
+
+    CAR: 100 rows
+    CAR_BODY_TYPE: 10 rows
+    CAR_MANUFACTURER: 10 rows
+    CAR_SALE_INFO: 100 rows
+    COLOUR_TYPE: 10 rows
+    CONDITION: 6 rows
+    CUSTOMER: 20 rows
+    DEPARTMENT: 5 rows
+    DRIVE_TYPE: 4 rows
+    EMPLOYEE: 10 rows
+    ENGINE_TYPE: 10 rows
+    FUEL_TYPE: 4 rows
+    PART: 50 rows
+    PART_CATEGORY: 8 rows
+    PART_MANUFACTURER: 6 rows
+    PART_SALE_INFO: 100 rows
+    SALES: 100 rows
+    TRANSMISSION_TYPE: 7 rows

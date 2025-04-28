@@ -1,605 +1,762 @@
--- 1. (Optional) Create a sequence for Body_ID values
-CREATE SEQUENCE car_body_type_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
 
--- 2. Populate the table with typical car body types
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Sedan');
+                BEGIN
+                    FOR r IN (SELECT table_name FROM user_tables) LOOP
+                        FOR c IN (SELECT constraint_name FROM user_constraints
+                                WHERE table_name = r.table_name
+                                AND constraint_type != 'P'  -- Skip primary keys if needed
+                                AND status = 'ENABLED') LOOP
+                            BEGIN
+                                EXECUTE IMMEDIATE 'ALTER TABLE "' || r.table_name ||
+                                                '" DISABLE CONSTRAINT "' || c.constraint_name || '"';
+                            END;
+                        END LOOP;
+                    END LOOP;
+                END;
+                /
+            
+-- fabricate-flush
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Hatchback');
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Coupe');
+DELETE FROM PART_SALE_INFO;
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Convertible');
+-- fabricate-flush
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Station Wagon');
+DELETE FROM PART;
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'SUV');
+-- fabricate-flush
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Crossover');
+DELETE FROM PART_CATEGORY;
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Minivan');
+-- fabricate-flush
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Pickup Truck');
+DELETE FROM PART_MANUFACTURER;
 
-INSERT INTO CAR_BODY_TYPE (Body_ID, Type_Description)
-VALUES (car_body_type_seq.NEXTVAL, 'Van');
+-- fabricate-flush
 
--- 3. Persist the changes
-COMMIT;
+DELETE FROM CAR_SALE_INFO;
 
--- (Optional) Create a sequence for Manufacturer_ID
-CREATE SEQUENCE car_manufacturer_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
+-- fabricate-flush
 
--- Insert popular car manufacturers
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Toyota');
+DELETE FROM SALES;
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Ford');
+-- fabricate-flush
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Honda');
+DELETE FROM EMPLOYEE;
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Chevrolet');
+-- fabricate-flush
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Nissan');
+DELETE FROM CAR;
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Volkswagen');
+-- fabricate-flush
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'BMW');
+DELETE FROM TRANSMISSION_TYPE;
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Mercedes-Benz');
+-- fabricate-flush
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Hyundai');
+DELETE FROM CAR_BODY_TYPE;
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Kia');
+-- fabricate-flush
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Subaru');
+DELETE FROM ENGINE_TYPE;
 
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Mazda');
-
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Lexus');
-
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Jeep');
-
-INSERT INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (car_manufacturer_seq.NEXTVAL, 'Tesla');
-
--- Persist the changes
-COMMIT;
-
--- (Optional) Create a sequence for Fuel_Type_ID
-CREATE SEQUENCE fuel_type_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
--- Insert fuel types
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Petrol');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Diesel');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Electric');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Hybrid (Petrol/Electric)');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Hybrid (Diesel/Electric)');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Plug-in Hybrid');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Hydrogen Fuel Cell');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Compressed Natural Gas (CNG)');
-
-INSERT INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description)
-VALUES (fuel_type_seq.NEXTVAL, 'Liquefied Petroleum Gas (LPG)');
-
--- Commit the changes
-COMMIT;
-
--- (Optional) Create a sequence for Engine_ID
-CREATE SEQUENCE engine_type_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
--- Insert engine types
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'Inline-4');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'Inline-3');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'Inline-6');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'V6');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'V8');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'V10');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'V12');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'Electric Motor');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'Rotary Engine (Wankel)');
-
-INSERT INTO ENGINE_TYPE (Engine_ID, Engine_Description)
-VALUES (engine_type_seq.NEXTVAL, 'Boxer (Flat) Engine');
-
--- Save the inserts
-COMMIT;
-
--- (Optional) Create a sequence for Colour_ID
-CREATE SEQUENCE colour_type_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
--- Insert popular car colours
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'White');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Black');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Silver');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Gray');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Blue');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Red');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Green');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Yellow');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Brown');
-
-INSERT INTO COLOUR_TYPE (Colour_ID, Colour_Name)
-VALUES (colour_type_seq.NEXTVAL, 'Orange');
-
--- Save the changes
-COMMIT;
-
--- (Optional) Create a sequence for Drive_Type_ID
-CREATE SEQUENCE drive_type_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
--- Insert typical drive types
-INSERT INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description)
-VALUES (drive_type_seq.NEXTVAL, 'Front-Wheel Drive (FWD)');
-
-INSERT INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description)
-VALUES (drive_type_seq.NEXTVAL, 'Rear-Wheel Drive (RWD)');
-
-INSERT INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description)
-VALUES (drive_type_seq.NEXTVAL, 'All-Wheel Drive (AWD)');
-
-INSERT INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description)
-VALUES (drive_type_seq.NEXTVAL, 'Four-Wheel Drive (4WD)');
-
--- Save the changes
-COMMIT;
-
-
--- (Optional) Create a sequence for Condition_ID
-CREATE SEQUENCE condition_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
--- Insert common car conditions
-INSERT INTO CONDITION (Condition_ID, Condition_Description)
-VALUES (condition_seq.NEXTVAL, 'New');
-
-INSERT INTO CONDITION (Condition_ID, Condition_Description)
-VALUES (condition_seq.NEXTVAL, 'Used - Excellent');
-
-INSERT INTO CONDITION (Condition_ID, Condition_Description)
-VALUES (condition_seq.NEXTVAL, 'Used - Good');
-
-INSERT INTO CONDITION (Condition_ID, Condition_Description)
-VALUES (condition_seq.NEXTVAL, 'Used - Fair');
-
-INSERT INTO CONDITION (Condition_ID, Condition_Description)
-VALUES (condition_seq.NEXTVAL, 'Damaged');
-
-INSERT INTO CONDITION (Condition_ID, Condition_Description)
-VALUES (condition_seq.NEXTVAL, 'For Parts / Not Working');
-
--- Save the changes
-COMMIT;
-
--- (Optional) Create a sequence for Transmission_Type_ID
-CREATE SEQUENCE transmission_type_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
--- Insert typical transmission types
-INSERT INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description)
-VALUES (transmission_type_seq.NEXTVAL, 'Manual');
-
-INSERT INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description)
-VALUES (transmission_type_seq.NEXTVAL, 'Automatic');
-
-INSERT INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description)
-VALUES (transmission_type_seq.NEXTVAL, 'Continuously Variable Transmission (CVT)');
-
-INSERT INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description)
-VALUES (transmission_type_seq.NEXTVAL, 'Semi-Automatic / Automated Manual');
-
-INSERT INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description)
-VALUES (transmission_type_seq.NEXTVAL, 'Dual-Clutch Transmission (DCT)');
-
--- Save the changes
-COMMIT;
-
--- Create sequence for Car_ID
-CREATE SEQUENCE car_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-
-BEGIN
-  FOR i IN 1..30 LOOP
-    INSERT INTO CAR (
-      Car_ID,
-      Body_Type_ID,
-      Manufacturer_ID,
-      Fuel_Type_ID,
-      Engine_ID,
-      Colour_ID,
-      Drive_Type_ID,
-      Condition_ID,
-      Transmission_Type_ID,
-      Price,
-      Mileage,
-      Year
-    ) VALUES (
-      car_seq.NEXTVAL,
-      TRUNC(DBMS_RANDOM.VALUE(1, 11)), -- 1 to 10 Body types
-      TRUNC(DBMS_RANDOM.VALUE(1, 11)), -- 1 to 10 Manufacturers
-      TRUNC(DBMS_RANDOM.VALUE(1, 6)),  -- 1 to 5 Fuel types
-      TRUNC(DBMS_RANDOM.VALUE(1, 11)), -- 1 to 10 Engine types
-      TRUNC(DBMS_RANDOM.VALUE(1, 11)), -- 1 to 10 Colour types
-      TRUNC(DBMS_RANDOM.VALUE(1, 5)),  -- 1 to 4 Drive types
-      TRUNC(DBMS_RANDOM.VALUE(1, 7)),  -- 1 to 6 Conditions
-      TRUNC(DBMS_RANDOM.VALUE(1, 6)),  -- 1 to 5 Transmission types
-      TRUNC(DBMS_RANDOM.VALUE(15000, 90000)), -- Price
-      TRUNC(DBMS_RANDOM.VALUE(0, 300000)),    -- Mileage
-      TRUNC(DBMS_RANDOM.VALUE(1995, 2024))    -- Year
-    );
-  END LOOP;
-  COMMIT;
-END;
-/
-
--- (Optional) Create a sequence for Department_ID
-CREATE SEQUENCE department_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-
--- Insert typical departments
-INSERT INTO DEPARTMENT (Department_ID, Department_Name)
-VALUES (department_seq.NEXTVAL, 'Sales');
-
-INSERT INTO DEPARTMENT (Department_ID, Department_Name)
-VALUES (department_seq.NEXTVAL, 'Service');
-
-INSERT INTO DEPARTMENT (Department_ID, Department_Name)
-VALUES (department_seq.NEXTVAL, 'Finance');
-
-INSERT INTO DEPARTMENT (Department_ID, Department_Name)
-VALUES (department_seq.NEXTVAL, 'Parts');
-
-INSERT INTO DEPARTMENT (Department_ID, Department_Name)
-VALUES (department_seq.NEXTVAL, 'Administration');
-
--- Save changes
-COMMIT;
-
--- Optional: Create a sequence for Employee_ID
-CREATE SEQUENCE employee_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-  
--- Insert multiple employees
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Smith', '0821234567', 'smith@example.com', 1);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Naidoo', '0839876543', 'naidoo@example.com', 2);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Van der Merwe', '0841112222', 'vdmerwe@example.com', 3);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Mokoena', '0723334444', 'mokoena@example.com', 4);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Patel', '0735556666', 'patel@example.com', 5);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Botha', '0767778888', 'botha@example.com', 1);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Jacobs', '0819990000', 'jacobs@example.com', 2);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Williams', '0791122334', 'williams@example.com', 3);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Zulu', '0742233445', 'zulu@example.com', 4);
-INSERT INTO EMPLOYEE (Employee_ID, RSA_ID, Surname, Cellphone, Email, Department_ID) VALUES (employee_seq.NEXTVAL, NULL, 'Khumalo', '0713344556', 'khumalo@example.com', 5);
-
-COMMIT;
-
--- Optional: Create sequence for Customer_ID
-CREATE SEQUENCE customer_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-
--- Insert multiple customers
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Johnson', '0823456789', 'johnson@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Peters', '0834567890', 'peters@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Mthembu', '0845678901', 'mthembu@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Singh', '0726789012', 'singh@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'De Villiers', '0797890123', 'devilliers@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Brown', '0821011122', 'brown@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Nkosi', '0832021223', 'nkosi@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Visser', '0843031324', 'visser@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Moodley', '0744041425', 'moodley@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Botha', '0725051526', 'botha@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Robinson', '0836061627', 'robinson@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Mbatha', '0847071728', 'mbatha@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Swart', '0828081829', 'swart@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Adams', '0739091920', 'adams@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Pretorius', '0740102031', 'pretorius@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Gomez', '0721122233', 'gomez@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Daniels', '0832132435', 'daniels@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Nguyen', '0843142536', 'nguyen@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Muller', '0744152637', 'muller@example.com');
-
-INSERT INTO CUSTOMER (Customer_ID, Surname, Cellphone, Email)
-VALUES (customer_seq.NEXTVAL, 'Clark', '0825162738', 'clark@example.com');
-
-COMMIT;
-
--- Optional: Create sequence for Category_ID
-CREATE SEQUENCE part_category_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-
--- Insert example part categories
-INSERT INTO PART_CATEGORY (Category_ID, Category_Description)
-VALUES (part_category_seq.NEXTVAL, 'Engine Components');
-
-INSERT INTO PART_CATEGORY (Category_ID, Category_Description)
-VALUES (part_category_seq.NEXTVAL, 'Brakes and Suspension');
-
-INSERT INTO PART_CATEGORY (Category_ID, Category_Description)
-VALUES (part_category_seq.NEXTVAL, 'Electrical System');
-
-INSERT INTO PART_CATEGORY (Category_ID, Category_Description)
-VALUES (part_category_seq.NEXTVAL, 'Interior Accessories');
-
-INSERT INTO PART_CATEGORY (Category_ID, Category_Description)
-VALUES (part_category_seq.NEXTVAL, 'Exterior Body Parts');
-
-INSERT INTO PART_CATEGORY (Category_ID, Category_Description)
-VALUES (part_category_seq.NEXTVAL, 'Tires and Wheels');
-
-COMMIT;
-
--- Optional: Create sequence for Manufacturer_ID
-CREATE SEQUENCE part_manufacturer_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-
--- Insert example part manufacturers
-INSERT INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (part_manufacturer_seq.NEXTVAL, 'Bosch');
-
-INSERT INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (part_manufacturer_seq.NEXTVAL, 'Delphi');
-
-INSERT INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (part_manufacturer_seq.NEXTVAL, 'NGK');
-
-INSERT INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (part_manufacturer_seq.NEXTVAL, 'Magneti Marelli');
-
-INSERT INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (part_manufacturer_seq.NEXTVAL, 'Denso');
-
-INSERT INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description)
-VALUES (part_manufacturer_seq.NEXTVAL, 'Valeo');
-
-COMMIT;
- 
- -- Optional: Create sequence for Part_ID
-CREATE SEQUENCE part_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-
--- Insert example parts
-INSERT INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price)
-VALUES (part_seq.NEXTVAL, 1, 1, 1599.99); -- Bosch, Engine Components
-
-INSERT INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price)
-VALUES (part_seq.NEXTVAL, 2, 2, 899.50); -- Delphi, Brakes and Suspension
-
-INSERT INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price)
-VALUES (part_seq.NEXTVAL, 3, 3, 499.00); -- NGK, Electrical System
-
-INSERT INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price)
-VALUES (part_seq.NEXTVAL, 4, 4, 799.75); -- Magneti Marelli, Interior Accessories
-
-INSERT INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price)
-VALUES (part_seq.NEXTVAL, 5, 5, 2499.99); -- Denso, Exterior Body Parts
-
-INSERT INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price)
-VALUES (part_seq.NEXTVAL, 6, 6, 1999.99); -- Valeo, Tires and Wheels
-
-COMMIT;
-
--- Optional: Create sequence for Invoice_ID
-CREATE SEQUENCE sales_seq
-  START WITH 1
-  INCREMENT BY 1
-  NOCACHE
-  NOCYCLE;
-
--- Insert more sales records
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 1, 3, TO_DATE('2025-04-20', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 2, 6, TO_DATE('2025-04-19', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 5, 9, TO_DATE('2025-04-18', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 4, 1, TO_DATE('2025-04-17', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 7, 4, TO_DATE('2025-04-16', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 6, 8, TO_DATE('2025-04-15', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 8, 11, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 9, 12, TO_DATE('2025-04-13', 'YYYY-MM-DD'));
-
-INSERT INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date)
-VALUES (sales_seq.NEXTVAL, 10, 13, TO_DATE('2025-04-12', 'YYYY-MM-DD'));
-
-
-COMMIT;
-
--- Create the sequence for generating Invoice_IDs
--- Insert sample records
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (1, 1, 6);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (2, 2, 2);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (3, 3, 10);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (4, 4, 3);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (5, 5, 8);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (6, 6, 1);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (7, 1, 4);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (8, 2, 7);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (9, 3, 5);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (10, 4, 9);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (5, 5, 6);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (9, 6, 2);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (3, 1, 12);
-INSERT INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES (2, 2, 3);
-
-COMMIT;
-
--- Insert sample car sale records
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (1, 30);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (2, 29);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (3, 28);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (4, 27);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (5, 26);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (6, 25);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (7, 1);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (8, 2);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (9, 2);
-INSERT INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES (5, 4);
-
-COMMIT;
-
-
-
+-- fabricate-flush
+
+DELETE FROM DRIVE_TYPE;
+
+-- fabricate-flush
+
+DELETE FROM DEPARTMENT;
+
+-- fabricate-flush
+
+DELETE FROM CUSTOMER;
+
+-- fabricate-flush
+
+DELETE FROM FUEL_TYPE;
+
+-- fabricate-flush
+
+DELETE FROM COLOUR_TYPE;
+
+-- fabricate-flush
+
+DELETE FROM CAR_MANUFACTURER;
+
+-- fabricate-flush
+
+DELETE FROM CONDITION;
+
+-- fabricate-flush
+
+
+INSERT ALL
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (1, '2', '3', '3', '3', '5', '4', '4', '3', '199.99', '359206', '1999')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (2, '6', '8', '1', '6', '7', '3', '3', '7', '4.99', '229533', '1995')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (3, '4', '2', '4', '8', '1', '1', '6', '1', '29.99', '483828', '1993')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (4, '9', '9', '2', '2', '2', '2', '1', '2', '1.79', '185703', '1991')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (5, '8', '5', '4', '5', '6', '1', '2', '6', '1.99', '109833', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (6, '10', '1', '2', '10', '8', '3', '5', '5', '1.89', '482692', '2001')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (7, '3', '4', '1', '9', '4', '2', '4', '4', '1.99', '455443', '1998')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (8, '5', '10', '3', '1', '10', '4', '2', '2', '3.29', '198562', '1986')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (9, '1', '6', '1', '7', '3', '3', '5', '6', '49.99', '388063', '1999')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (10, '7', '7', '4', '4', '9', '2', '1', '5', '1.99', '476796', '2000')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (11, '3', '5', '2', '9', '8', '4', '3', '4', '2.49', '49575', '2012')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (12, '6', '7', '3', '8', '2', '1', '6', '7', '34.99', '128567', '2006')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (13, '5', '4', '1', '1', '9', '4', '6', '1', '25.99', '403319', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (14, '7', '2', '2', '10', '5', '1', '4', '3', '6.99', '63692', '2005')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (15, '4', '9', '4', '3', '1', '3', '2', '7', '99.99', '270558', '2006')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (16, '2', '8', '3', '6', '4', '2', '5', '6', '2.49', '353092', '1991')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (17, '9', '1', '1', '5', '10', '2', '1', '1', '24.99', '360704', '2006')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (18, '8', '10', '3', '7', '6', '3', '3', '4', '2.49', '123508', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (19, '1', '3', '4', '4', '7', '1', '2', '2', '3.29', '444936', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (20, '10', '6', '2', '2', '3', '4', '6', '5', '24.99', '170873', '2003')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (21, '8', '5', '4', '4', '6', '1', '5', '3', '24.99', '295351', '2008')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (22, '10', '4', '1', '9', '8', '2', '4', '6', '2.99', '341658', '1996')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (23, '9', '9', '3', '7', '7', '4', '3', '4', '7.99', '22036', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (24, '7', '6', '2', '6', '10', '3', '1', '2', '14.99', '252204', '2012')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (25, '3', '8', '2', '1', '3', '4', '1', '7', '5.99', '189659', '2012')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (26, '1', '7', '1', '8', '1', '1', '3', '5', '24.99', '494646', '1998')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (27, '4', '10', '3', '10', '2', '3', '2', '1', '49.99', '176714', '1991')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (28, '2', '3', '4', '2', '5', '2', '6', '3', '8.99', '30719', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (29, '6', '1', '1', '3', '4', '2', '4', '3', '14.99', '308661', '2009')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (30, '5', '2', '4', '5', '9', '4', '5', '7', '7.99', '172886', '2011')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (31, '5', '5', '2', '2', '6', '1', '6', '6', '199.99', '201617', '2009')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (32, '8', '10', '3', '6', '1', '3', '5', '1', '2.49', '279891', '1997')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (33, '10', '6', '4', '4', '4', '1', '4', '4', '2.49', '83987', '1967')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (34, '9', '7', '1', '9', '3', '3', '1', '2', '34.99', '103409', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (35, '7', '2', '3', '8', '8', '2', '3', '5', '49.99', '160298', '2008')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (36, '3', '3', '2', '10', '5', '4', '2', '1', '24.99', '170519', '2009')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (37, '1', '9', '4', '3', '7', '2', '5', '2', '4.29', '260085', '2006')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (38, '4', '1', '1', '5', '10', '4', '3', '6', '19.99', '195016', '1994')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (39, '2', '8', '3', '1', '2', '3', '6', '5', '4.99', '112016', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (40, '6', '4', '2', '7', '9', '1', '1', '4', '39.99', '264047', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (41, '1', '2', '1', '8', '2', '4', '4', '3', '2.49', '441436', '1989')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (42, '7', '9', '3', '4', '5', '1', '2', '7', '59.99', '481246', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (43, '4', '6', '4', '5', '10', '3', '2', '1', '3.49', '391079', '2002')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (44, '3', '1', '2', '10', '9', '2', '5', '4', '2.49', '103293', '2009')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (45, '6', '4', '3', '6', '1', '3', '4', '2', '59.99', '370175', '1987')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (46, '8', '3', '1', '7', '7', '1', '3', '7', '22.99', '240162', '2008')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (47, '2', '8', '4', '2', '4', '4', '6', '5', '4.99', '326727', '1985')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (48, '5', '5', '2', '3', '3', '2', '1', '3', '2.79', '211820', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (49, '10', '7', '1', '9', '6', '1', '4', '6', '4.49', '200676', '1994')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (50, '9', '10', '3', '1', '8', '4', '3', '1', '4.19', '482706', '1996')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (51, '6', '2', '4', '1', '8', '2', '1', '4', '89.99', '226394', '1994')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (52, '5', '6', '2', '7', '4', '3', '2', '2', '19.99', '277666', '1971')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (53, '8', '4', '1', '4', '5', '3', '6', '7', '6.49', '179777', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (54, '10', '9', '2', '3', '10', '1', '5', '5', '2.99', '5801', '2001')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (55, '9', '8', '4', '6', '6', '2', '5', '3', '1.29', '367500', '2006')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (56, '7', '10', '3', '8', '7', '4', '1', '6', '3.79', '281441', '2002')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (57, '3', '3', '2', '2', '2', '4', '3', '7', '22.99', '134266', '2001')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (58, '1', '5', '3', '5', '3', '3', '6', '6', '29.99', '457315', '2003')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (59, '4', '1', '1', '10', '9', '1', '4', '1', '22.99', '150336', '2004')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (60, '2', '7', '4', '9', '1', '2', '2', '2', '24.99', '7877', '2007')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (61, '2', '1', '4', '3', '8', '3', '6', '5', '9.99', '434504', '2007')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (62, '6', '10', '2', '6', '10', '2', '1', '4', '3.49', '330698', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (63, '4', '3', '3', '8', '3', '4', '4', '3', '99.99', '38741', '1996')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (64, '9', '6', '1', '2', '5', '1', '2', '1', '6.99', '449318', '2001')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (65, '8', '5', '3', '5', '1', '1', '5', '3', '4.29', '455839', '1993')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (66, '10', '7', '1', '10', '7', '3', '3', '2', '4.49', '189522', '2005')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (67, '3', '4', '2', '9', '2', '2', '5', '6', '14.99', '167100', '1995')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (68, '5', '2', '4', '1', '6', '4', '4', '4', '4.19', '225395', '1999')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (69, '1', '9', '3', '7', '4', '1', '3', '7', '3.99', '31084', '1979')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (70, '7', '8', '1', '4', '9', '4', '1', '5', '24.99', '102299', '2006')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (71, '10', '2', '4', '3', '10', '2', '2', '3', '3.29', '235103', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (72, '6', '9', '2', '5', '9', '3', '6', '2', '29.99', '191859', '2009')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (73, '7', '1', '4', '8', '7', '4', '3', '6', '2.59', '495363', '2003')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (74, '3', '10', '1', '7', '3', '2', '6', '5', '2.99', '498358', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (75, '8', '6', '3', '2', '1', '1', '1', '4', '49.99', '273943', '2007')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (76, '2', '4', '2', '9', '4', '3', '4', '7', '34.99', '25670', '2007')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (77, '9', '3', '2', '1', '2', '4', '2', '1', '34.99', '380140', '2008')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (78, '5', '5', '3', '10', '6', '2', '5', '2', '59.99', '16101', '2008')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (79, '1', '8', '1', '6', '5', '1', '6', '6', '3.99', '308590', '1972')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (80, '4', '7', '4', '4', '8', '3', '4', '5', '1.29', '381556', '1998')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (81, '8', '6', '3', '3', '3', '1', '5', '4', '2.29', '89908', '2003')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (82, '2', '5', '1', '5', '6', '2', '1', '3', '29.99', '18260', '1991')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (83, '9', '8', '4', '8', '8', '4', '3', '7', '3.69', '391058', '2009')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (84, '5', '10', '2', '7', '2', '3', '2', '1', '4.99', '279849', '1998')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (85, '1', '9', '1', '2', '5', '3', '3', '7', '2.89', '20482', '2009')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (86, '4', '7', '2', '9', '10', '2', '2', '1', '29.99', '110465', '2012')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (87, '10', '3', '4', '1', '9', '4', '6', '2', '29.99', '322182', '2011')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (88, '6', '1', '3', '10', '1', '1', '5', '6', '4.99', '180997', '2003')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (89, '7', '4', '3', '6', '7', '3', '4', '5', '3.49', '298652', '1992')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (90, '3', '2', '2', '4', '4', '4', '1', '4', '4.99', '115207', '2010')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (91, '8', '7', '4', '8', '8', '2', '4', '3', '2.99', '30367', '2004')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (92, '7', '2', '1', '10', '10', '1', '2', '5', '10.99', '132835', '1990')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (93, '10', '9', '2', '3', '9', '4', '5', '4', '29.99', '396040', '1988')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (94, '3', '1', '4', '5', '7', '3', '1', '3', '4.49', '54583', '2006')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (95, '1', '10', '3', '1', '3', '1', '3', '7', '2.99', '211040', '2011')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (96, '2', '6', '1', '7', '1', '2', '6', '1', '3.49', '345691', '2005')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (97, '5', '4', '1', '2', '4', '4', '2', '2', '15.99', '177896', '2008')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (98, '4', '3', '3', '6', '2', '2', '5', '6', '1.49', '303845', '2012')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (99, '9', '5', '2', '4', '6', '1', '3', '2', '19.99', '111169', '1987')
+INTO CAR (Car_ID, Body_Type_ID, Manufacturer_ID, Fuel_Type_ID, Engine_ID, Colour_ID, Drive_Type_ID, Condition_ID, Transmission_Type_ID, Price, Mileage, C_Year) VALUES (100, '6', '8', '4', '9', '5', '3', '6', '7', '34.99', '209235', '2011')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (1, 'Individua')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (2, 'Enim')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (3, 'Provident')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (4, 'Faciam')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (5, 'Noris')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (6, 'Erroribus')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (7, 'De')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (8, 'Stulti')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (9, 'Magnopere')
+INTO CAR_BODY_TYPE (Body_ID, Type_Description) VALUES (10, 'Constituant')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (4, 'Audi')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (10, 'BMW')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (9, 'Chevrolet')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (1, 'Ford')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (5, 'Honda')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (3, 'Mercedes-Benz')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (8, 'Nissan')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (2, 'Porsche')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (7, 'Toyota')
+INTO CAR_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (6, 'Volkswagen')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('81', '90')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('48', '6')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('99', '14')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('9', '59')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('82', '42')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('86', '1')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('45', '4')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('57', '89')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('92', '43')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('40', '41')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('60', '28')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('74', '30')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('64', '53')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('63', '20')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('33', '82')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('26', '2')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('71', '23')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('94', '75')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('44', '12')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('20', '78')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('25', '24')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('65', '94')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('76', '40')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('55', '7')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('24', '69')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('28', '84')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('50', '38')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('14', '36')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('41', '62')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('10', '63')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('98', '76')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('22', '67')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('52', '87')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('17', '77')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('8', '54')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('83', '80')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('91', '86')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('96', '56')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('11', '11')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('95', '60')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('37', '97')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('67', '16')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('16', '22')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('30', '79')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('73', '98')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('15', '44')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('59', '95')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('35', '64')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('3', '48')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('47', '52')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('36', '37')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('7', '18')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('21', '29')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('1', '81')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('53', '21')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('56', '100')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('49', '19')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('85', '73')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('42', '35')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('34', '3')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('70', '99')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('5', '57')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('31', '47')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('87', '39')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('27', '27')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('23', '58')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('61', '49')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('13', '70')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('18', '13')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('90', '55')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('77', '65')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('89', '8')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('80', '83')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('79', '85')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('58', '31')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('51', '74')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('32', '68')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('69', '9')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('19', '71')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('75', '88')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('78', '93')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('62', '96')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('100', '51')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('46', '91')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('66', '26')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('93', '72')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('84', '5')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('2', '66')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('38', '50')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('97', '25')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('12', '92')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('6', '32')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('72', '34')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('29', '10')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('39', '45')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('88', '61')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('68', '17')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('4', '46')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('54', '33')
+INTO CAR_SALE_INFO (Invoice_ID, Car_ID) VALUES ('43', '15')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (1, 'Gray')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (2, 'Blue')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (3, 'Green')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (4, 'Brown')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (5, 'Black')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (6, 'Beige')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (7, 'White')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (8, 'Yellow')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (9, 'Red')
+INTO COLOUR_TYPE (Colour_ID, Colour_Name) VALUES (10, 'Silver')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO CONDITION (Condition_ID, Condition_Description) VALUES (1, 'Used - Fair')
+INTO CONDITION (Condition_ID, Condition_Description) VALUES (2, 'Used - Very Good')
+INTO CONDITION (Condition_ID, Condition_Description) VALUES (3, 'Used - Poor')
+INTO CONDITION (Condition_ID, Condition_Description) VALUES (4, 'New')
+INTO CONDITION (Condition_ID, Condition_Description) VALUES (5, 'Used - Good')
+INTO CONDITION (Condition_ID, Condition_Description) VALUES (6, 'Used - Excellent')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (1, 'Dorita', 'Roadnight', '3235794433', 'dorita.roadnight@yahoo.co.in')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (2, 'Harmonie', 'De Carlo', '7177950131', 'harmonie.decarlo@yahoo.com.br')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (3, 'Sheryl', 'Eckley', '2432839054', 'sheryl.eckley@aol.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (4, 'Glennis', 'Swetenham', '4917863273', 'glennis.swetenham@gmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (5, 'Luis', 'Wooding', '6444763147', 'luis.wooding@hotmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (6, 'Roderigo', 'Rookwell', '7781553968', 'roderigo.rookwell@yahoo.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (7, 'Juanita', 'Sayle', '9626640587', 'juanita.sayle@aol.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (8, 'Selia', 'Witterick', '9938294182', 'selia.witterick@hotmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (9, 'Doralynn', 'Bance', '3517093888', 'doralynn.bance@hotmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (10, 'Bidget', 'Von Der Empten', '0087360376', 'bidget.vonderempten@hotmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (11, 'Abraham', 'Colquitt', '3384082156', 'abraham.colquitt@yahoo.in')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (12, 'Malvin', 'Brocklesby', '3132567105', 'malvin.brocklesby@hotmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (13, 'Ariadne', 'Dmtrovic', '4525403639', 'ariadne.dmtrovic@yahoo.fr')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (14, 'Bruce', 'Jevons', '0369266575', 'bruce.jevons@hotmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (15, 'Joby', 'Bortol', '9037947121', 'joby.bortol@yahoo.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (16, 'Talya', 'McAuslene', '5453683437', 'talya.mcauslene@gmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (17, 'Quintana', 'Buscher', '7890885452', 'quintana.buscher@yahoo.com.sg')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (18, 'Conny', 'Brightman', '9504449731', 'conny.brightman@yahoo.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (19, 'Merrile', 'Stote', '6155091446', 'merrile.stote@hotmail.com')
+INTO CUSTOMER (Customer_ID, FName, Surname, Cellphone, Email) VALUES (20, 'Aurelia', 'Ucceli', '4603496690', 'aurelia.ucceli@facebook.com')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO DEPARTMENT (Department_ID, Department_Name) VALUES (1, 'Sales')
+INTO DEPARTMENT (Department_ID, Department_Name) VALUES (3, 'Marketing')
+INTO DEPARTMENT (Department_ID, Department_Name) VALUES (5, 'IT')
+INTO DEPARTMENT (Department_ID, Department_Name) VALUES (2, 'Human Resources')
+INTO DEPARTMENT (Department_ID, Department_Name) VALUES (4, 'Finance')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description) VALUES (4, 'All Wheel Drive (AWD)')
+INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description) VALUES (2, 'Four Wheel Drive (4WD)')
+INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description) VALUES (1, 'Front Wheel Drive (FWD)')
+INTO DRIVE_TYPE (Drive_Type_ID, Drive_Type_Description) VALUES (3, 'Rear Wheel Drive (RWD)')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (1, '534453848', 'Dorita', 'Roadnight', '9039741783', 'dorita.roadnight@yahoo.co.in', '4')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (2, '204679914', 'Harmonie', 'De Carlo', '7822870774', 'harmonie.decarlo@yahoo.com.br', '5')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (3, '462561250', 'Sheryl', 'Eckley', '8833320884', 'sheryl.eckley@aol.com', '1')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (4, '547969165', 'Glennis', 'Swetenham', '1390251499', 'glennis.swetenham@gmail.com', '3')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (5, '807542967', 'Luis', 'Wooding', '6491975552', 'luis.wooding@hotmail.com', '2')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (6, '202494251', 'Roderigo', 'Rookwell', '6216919733', 'roderigo.rookwell@yahoo.com', '1')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (7, '082929433', 'Juanita', 'Sayle', '7062203526', 'juanita.sayle@aol.com', '2')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (8, '421689014', 'Selia', 'Witterick', '7864904309', 'selia.witterick@hotmail.com', '5')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (9, '496738174', 'Doralynn', 'Bance', '6601802443', 'doralynn.bance@hotmail.com', '4')
+INTO EMPLOYEE (Employee_ID, RSA_ID, Emp_Name, Surname, Cellphone, Email, Department_ID) VALUES (10, '710935476', 'Bidget', 'Von Der Empten', '4323127174', 'bidget.vonderempten@hotmail.com', '3')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (4, 'Boxer-4')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (9, 'Boxer-6')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (3, 'Diesel')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (8, 'Electric')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (1, 'Hybrid')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (10, 'Inline-4')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (5, 'Inline-6')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (7, 'V12')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (2, 'V6')
+INTO ENGINE_TYPE (Engine_ID, Engine_Description) VALUES (6, 'V8')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description) VALUES (1, 'Electric')
+INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description) VALUES (2, 'Diesel')
+INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description) VALUES (3, 'Petrol')
+INTO FUEL_TYPE (Fuel_Type_ID, Fuel_Type_Description) VALUES (4, 'Hybrid')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (1, '3', '6', '29.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (2, '6', '4', '39.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (3, '1', '3', '6.89')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (4, '4', '5', '6.29')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (5, '2', '8', '39.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (6, '5', '7', '1.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (7, '3', '2', '2.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (8, '6', '1', '12.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (9, '4', '3', '34.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (10, '2', '6', '39.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (11, '5', '8', '5.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (12, '1', '2', '14.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (13, '5', '5', '12.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (14, '4', '1', '3.49')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (15, '1', '7', '3.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (16, '3', '4', '2.49')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (17, '2', '1', '1.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (18, '6', '4', '2.29')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (19, '2', '3', '4.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (20, '5', '8', '0.89')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (21, '1', '5', '3.29')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (22, '3', '7', '8.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (23, '6', '2', '14.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (24, '4', '6', '2.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (25, '1', '1', '49.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (26, '3', '4', '1.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (27, '6', '3', '4.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (28, '4', '8', '25.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (29, '2', '5', '5.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (30, '5', '7', '18.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (31, '6', '2', '5.49')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (32, '1', '6', '2.49')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (33, '4', '6', '49.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (34, '2', '5', '2.79')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (35, '5', '8', '4.29')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (36, '3', '7', '9.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (37, '5', '3', '39.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (38, '3', '1', '1.69')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (39, '6', '4', '4.49')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (40, '1', '2', '14.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (41, '4', '7', '1.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (42, '2', '6', '1.49')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (43, '1', '1', '169.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (44, '3', '8', '10.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (45, '6', '2', '5.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (46, '4', '3', '29.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (47, '2', '5', '19.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (48, '5', '4', '22.99')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (49, '5', '5', '5.49')
+INTO PART (Part_ID, Manufacturer_ID, Category_ID, Price) VALUES (50, '3', '7', '14.99')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (1, 'Transmission')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (2, 'Electrical')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (3, 'Exhaust')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (4, 'Brakes')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (5, 'Lighting')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (6, 'Fuel System')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (7, 'Suspension')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (8, 'Wheels')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (3, 'Bosch')
+INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (6, 'Continental')
+INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (5, 'Dana Incorporated')
+INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (4, 'Denso')
+INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (1, 'NGK')
+INTO PART_MANUFACTURER (Manufacturer_ID, Manufacturer_Description) VALUES (2, 'Schaeffler')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('51', '38', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('11', '6', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('91', '3', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('93', '34', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('19', '17', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('86', '23', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('70', '27', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('72', '20', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('3', '13', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('62', '16', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('42', '32', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('5', '19', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('68', '10', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('63', '30', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('54', '15', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('89', '35', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('60', '21', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('35', '14', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('9', '26', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('30', '39', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('67', '5', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('10', '33', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('23', '50', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('90', '7', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('25', '47', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('57', '1', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('59', '31', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('17', '36', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('13', '4', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('48', '25', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('18', '45', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('45', '18', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('61', '44', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('1', '41', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('8', '48', '9')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('21', '22', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('14', '49', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('88', '2', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('27', '12', '8')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('2', '28', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('78', '37', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('100', '40', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('69', '8', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('38', '11', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('77', '46', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('7', '24', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('50', '29', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('83', '9', '8')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('43', '42', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('82', '43', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('56', '40', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('81', '14', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('55', '33', '11')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('16', '36', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('34', '49', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('71', '10', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('32', '39', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('79', '20', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('15', '24', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('24', '43', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('99', '50', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('29', '27', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('66', '31', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('36', '23', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('22', '25', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('6', '8', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('49', '32', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('12', '44', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('41', '4', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('52', '46', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('40', '15', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('26', '12', '8')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('92', '1', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('31', '2', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('58', '5', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('46', '26', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('95', '42', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('73', '28', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('33', '48', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('97', '38', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('37', '37', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('80', '7', '5')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('87', '17', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('65', '22', '8')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('47', '11', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('85', '47', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('64', '19', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('28', '29', '8')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('84', '35', '7')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('74', '45', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('94', '6', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('44', '34', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('53', '16', '4')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('96', '9', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('98', '3', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('4', '18', '1')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('76', '13', '3')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('20', '30', '2')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('75', '21', '6')
+INTO PART_SALE_INFO (Invoice_ID, Part_ID, Quantity) VALUES ('39', '41', '8')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (12, '6', '8', TO_DATE('2025-01-27', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (39, '5', '19', TO_DATE('2024-07-10', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (28, '5', '8', TO_DATE('2024-06-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (55, '10', '4', TO_DATE('2024-03-22', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (87, '2', '19', TO_DATE('2024-02-23', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (17, '3', '1', TO_DATE('2024-02-03', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (56, '3', '2', TO_DATE('2023-11-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (20, '7', '2', TO_DATE('2023-04-08', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (57, '5', '14', TO_DATE('2022-12-24', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (76, '1', '15', TO_DATE('2022-10-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (35, '3', '1', TO_DATE('2022-09-22', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (49, '9', '12', TO_DATE('2022-08-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (13, '4', '11', TO_DATE('2022-06-16', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (97, '9', '14', TO_DATE('2022-05-06', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (85, '3', '12', TO_DATE('2022-01-17', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (29, '8', '6', TO_DATE('2022-01-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (48, '3', '13', TO_DATE('2021-12-02', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (59, '7', '10', TO_DATE('2021-08-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (32, '1', '12', TO_DATE('2021-07-08', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (3, '4', '14', TO_DATE('2020-09-17', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (53, '9', '16', TO_DATE('2020-05-29', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (22, '9', '14', TO_DATE('2020-05-01', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (63, '8', '6', TO_DATE('2020-03-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (38, '2', '3', TO_DATE('2020-02-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (40, '10', '16', TO_DATE('2019-09-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (81, '4', '6', TO_DATE('2019-09-03', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (26, '4', '9', TO_DATE('2019-06-25', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (4, '2', '7', TO_DATE('2018-11-14', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (19, '1', '20', TO_DATE('2018-10-10', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (33, '7', '5', TO_DATE('2018-09-26', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (79, '5', '14', TO_DATE('2018-09-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (94, '2', '15', TO_DATE('2018-08-29', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (21, '2', '15', TO_DATE('2017-12-12', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (96, '10', '2', TO_DATE('2017-11-11', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (25, '6', '18', TO_DATE('2017-08-13', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (71, '6', '11', TO_DATE('2017-08-12', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (100, '4', '1', TO_DATE('2017-07-29', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (1, '5', '5', TO_DATE('2017-02-19', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (72, '7', '4', TO_DATE('2016-09-23', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (91, '3', '17', TO_DATE('2016-04-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (99, '7', '9', TO_DATE('2015-12-23', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (68, '1', '18', TO_DATE('2015-11-13', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (18, '5', '13', TO_DATE('2015-07-18', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (66, '10', '10', TO_DATE('2015-07-01', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (65, '5', '3', TO_DATE('2015-05-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (64, '2', '13', TO_DATE('2015-03-25', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (36, '6', '10', TO_DATE('2014-09-13', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (58, '1', '11', TO_DATE('2014-08-15', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (23, '1', '11', TO_DATE('2014-06-29', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (62, '6', '1', TO_DATE('2014-05-15', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (82, '10', '13', TO_DATE('2013-08-10', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (9, '3', '12', TO_DATE('2013-08-01', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (31, '9', '2', TO_DATE('2013-06-29', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (73, '2', '17', TO_DATE('2013-02-02', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (47, '2', '20', TO_DATE('2012-09-04', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (77, '8', '20', TO_DATE('2012-08-27', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (2, '7', '10', TO_DATE('2012-07-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (42, '4', '8', TO_DATE('2012-03-27', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (98, '1', '16', TO_DATE('2011-12-01', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (52, '4', '5', TO_DATE('2011-09-11', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (44, '10', '1', TO_DATE('2011-07-21', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (67, '9', '12', TO_DATE('2011-06-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (24, '10', '4', TO_DATE('2011-03-26', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (5, '9', '17', TO_DATE('2011-02-23', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (89, '5', '11', TO_DATE('2011-01-29', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (93, '8', '8', TO_DATE('2011-01-10', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (84, '7', '10', TO_DATE('2010-12-24', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (60, '2', '9', TO_DATE('2010-11-10', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (69, '7', '19', TO_DATE('2010-08-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (6, '8', '6', TO_DATE('2010-06-29', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (54, '8', '7', TO_DATE('2010-05-21', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (41, '8', '6', TO_DATE('2010-03-06', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (37, '8', '17', TO_DATE('2009-01-09', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (30, '7', '13', TO_DATE('2009-01-03', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (83, '6', '3', TO_DATE('2008-12-02', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (61, '3', '9', TO_DATE('2008-11-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (15, '8', '4', TO_DATE('2008-09-28', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (88, '9', '5', TO_DATE('2008-01-26', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (7, '1', '3', TO_DATE('2007-12-07', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (90, '1', '4', TO_DATE('2007-09-21', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (45, '6', '3', TO_DATE('2007-03-19', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (27, '3', '20', TO_DATE('2007-01-05', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (70, '4', '5', TO_DATE('2006-11-16', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (50, '1', '19', TO_DATE('2006-09-08', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (78, '4', '2', TO_DATE('2006-04-03', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (95, '5', '20', TO_DATE('2005-06-27', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (86, '8', '18', TO_DATE('2005-05-21', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (43, '5', '15', TO_DATE('2005-05-11', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (34, '4', '7', TO_DATE('2005-03-11', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (8, '10', '15', TO_DATE('2005-01-25', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (46, '7', '18', TO_DATE('2004-10-24', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (10, '6', '9', TO_DATE('2004-10-21', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (11, '2', '19', TO_DATE('2004-10-19', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (51, '6', '17', TO_DATE('2004-05-01', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (80, '10', '16', TO_DATE('2003-10-06', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (74, '3', '7', TO_DATE('2003-09-09', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (14, '9', '16', TO_DATE('2003-07-25', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (16, '10', '18', TO_DATE('2003-01-30', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (92, '6', '7', TO_DATE('2002-10-12', 'YYYY-MM-DD HH24:MI:SS'))
+INTO SALES (Invoice_ID, Employee_ID, Customer_ID, Sales_Date) VALUES (75, '9', '8', TO_DATE('2002-03-21', 'YYYY-MM-DD HH24:MI:SS'))
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+INSERT ALL
+INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description) VALUES (1, 'Continuously Variable Transmission (CVT)')
+INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description) VALUES (2, 'Automatic')
+INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description) VALUES (3, 'Dual-Clutch Transmission (DCT)')
+INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description) VALUES (4, 'Semi-Automatic')
+INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description) VALUES (5, 'Direct-Shift Gearbox (DSG)')
+INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description) VALUES (6, 'Tiptronic')
+INTO TRANSMISSION_TYPE (Transmission_Type_ID, Transmission_Type_Description) VALUES (7, 'Manual')
+SELECT 1 FROM DUAL;
+-- fabricate-flush
+
+
+
+                BEGIN
+                    FOR r IN (SELECT table_name FROM user_tables) LOOP
+                        FOR c IN (SELECT constraint_name FROM user_constraints
+                                WHERE table_name = r.table_name
+                                AND status = 'DISABLED') LOOP
+                            BEGIN
+                                EXECUTE IMMEDIATE 'ALTER TABLE "' || r.table_name ||
+                                            '" ENABLE CONSTRAINT "' || c.constraint_name || '"';
+                            EXCEPTION
+                                WHEN OTHERS THEN
+                                    DBMS_OUTPUT.PUT_LINE('Error enabling constraint ' ||
+                                                    c.constraint_name || ' on table ' ||
+                                                    r.table_name || ': ' || SQLERRM);
+                            END;
+                        END LOOP;
+                    END LOOP;
+                END;
+                /
+            
