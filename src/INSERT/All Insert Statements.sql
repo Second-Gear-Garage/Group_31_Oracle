@@ -502,7 +502,7 @@ INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (4, 'Brakes')
 INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (5, 'Lighting')
 INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (6, 'Fuel System')
 INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (7, 'Suspension')
-INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (8, 'Wheels & Tires')
+INTO PART_CATEGORY (Category_ID, Category_Description) VALUES (8, 'Wheels')
 SELECT 1 FROM DUAL;
 -- fabricate-flush
 
