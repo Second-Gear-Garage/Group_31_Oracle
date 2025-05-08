@@ -90,4 +90,72 @@ FROM
   CAR
 WHERE
   Price > (SELECT AVG(Price) FROM CAR );
+  
+  
+/*Queries regarding the specific reports on the SCOPE*/
+/*Summary of sales per time period*/
+SELECT 
+  TO_CHAR(s.Sales_Date, 'YYYY-MM') AS TheMonth,
+  COUNT(DISTINCT s.Invoice_ID) AS Total_Sales,
+  SUM(p.Price * psi.Quantity) AS Total_Revenue
+FROM 
+  SALES s
+  JOIN PART_SALE_INFO psi ON s.Invoice_ID = psi.Invoice_ID
+  JOIN PART p ON psi.Part_ID = p.Part_ID
+GROUP BY 
+  TO_CHAR(s.Sales_Date, 'YYYY-MM')
+ORDER BY 
+  TheMonth;
+
+  
+/*Inventory stock levels and changes*/
+
+/*Customer purchasing trends*/
+SELECT 
+  c.Customer_ID,
+  COUNT(DISTINCT s.Invoice_ID) AS Total_Orders,
+  SUM(p.Price * psi.Quantity) AS Total_Spent,
+  MAX(s.Sales_Date) AS Last_Purchase_Date
+FROM 
+  CUSTOMER c
+  JOIN SALES s ON c.Customer_ID = s.Customer_ID
+  JOIN PART_SALE_INFO psi ON s.Invoice_ID = psi.Invoice_ID
+  JOIN PART p ON psi.Part_ID = p.Part_ID
+GROUP BY 
+  c.Customer_ID
+ORDER BY 
+  Total_Spent DESC;
+
+/*Monthly sales revenue*/
+SELECT 
+  EXTRACT(YEAR FROM Sales_Date) AS TheYear,
+  EXTRACT(MONTH FROM Sales_Date) AS TheMonth,
+  SUM(p.Price * psi.Quantity) AS Monthly_Revenue
+FROM 
+  SALES s
+  JOIN PART_SALE_INFO psi ON s.Invoice_ID = psi.Invoice_ID
+  JOIN PART p ON psi.Part_ID = p.Part_ID
+GROUP BY 
+  EXTRACT(YEAR FROM Sales_Date), EXTRACT(MONTH FROM Sales_Date)
+ORDER BY 
+  TheYear, TheMonth;
+  
+/*Employee performance tracking*/
+SELECT 
+  e.Employee_ID,
+  e.EMP_NAME || ' ' || e.SURNAME AS Employee_Name,
+  COUNT(DISTINCT s.Invoice_ID) AS Invoices_Handled,
+  SUM(p.Price * psi.Quantity) AS Revenue_Generated
+FROM 
+  EMPLOYEE e
+  JOIN SALES s ON e.Employee_ID = s.Employee_ID
+  JOIN PART_SALE_INFO psi ON s.Invoice_ID = psi.Invoice_ID
+  JOIN PART p ON psi.Part_ID = p.Part_ID
+GROUP BY 
+  e.Employee_ID, e.EMP_NAME, e.SURNAME
+ORDER BY 
+  Revenue_Generated DESC;
+
+
+
 
