@@ -17,16 +17,36 @@ ORDER BY
 
 
 --Top selling parts
-
-SELECT p.Part_ID, pm.Manufacturer_Description, pc.Category_Description,
-       SUM(psi.Quantity) AS Total_Quantity_Sold,
-       SUM(psi.Quantity * p.Price) AS Total_Revenue
-FROM PART_SALE_INFO psi
-JOIN PART p ON psi.Part_ID = p.Part_ID
-JOIN PART_MANUFACTURER pm ON p.Manufacturer_ID = pm.Manufacturer_ID
-JOIN PART_CATEGORY pc ON p.Category_ID = pc.Category_ID
-GROUP BY p.Part_ID, pm.Manufacturer_Description, pc.Category_Description
-ORDER BY Total_Quantity_Sold DESC;
+SELECT
+    "PART_ID",
+    "MANUFACTURER_DESCRIPTION",
+    "CATEGORY_DESCRIPTION",
+    "TOTAL_QUANTITY_SOLD",
+    "TOTAL_REVENUE"
+FROM
+    (
+        SELECT
+            p.Part_ID,
+            pm.Manufacturer_Description,
+            pc.Category_Description,
+            SUM(psi.Quantity) AS Total_Quantity_Sold,
+            SUM(psi.Quantity * p.Price) AS Total_Revenue,
+            ROW_NUMBER() OVER (ORDER BY SUM(psi.Quantity) DESC) AS rnum -- Assign row numbers based on sales
+        FROM
+            PART_SALE_INFO psi
+        JOIN
+            PART p ON psi.Part_ID = p.Part_ID
+        JOIN
+            PART_MANUFACTURER pm ON p.Manufacturer_ID = pm.Manufacturer_ID
+        JOIN
+            PART_CATEGORY pc ON p.Category_ID = pc.Category_ID
+        GROUP BY
+            p.Part_ID,
+            pm.Manufacturer_Description,
+            pc.Category_Description
+    )
+WHERE
+    rnum <= 10; -- Filter based on the assigned row numbers
 
 
 --SALES with both CARS and PARTS
