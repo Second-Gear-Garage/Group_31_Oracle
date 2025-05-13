@@ -1,12 +1,20 @@
---Parts sales by category
+-- Parts sales by category
 
-SELECT pc.Category_Description, SUM(psi.Quantity) AS Total_Quantity_Sold,
-       SUM(psi.Quantity * p.Price) AS Total_Revenue
-FROM PART_SALE_INFO psi
-JOIN PART p ON psi.Part_ID = p.Part_ID
-JOIN PART_CATEGORY pc ON p.Category_ID = pc.Category_ID
-GROUP BY pc.Category_Description
-ORDER BY Total_Revenue DESC;
+SELECT
+    pc.Category_Description,
+    SUM(psi.Quantity) AS Total_Quantity_Sold,
+    SUM(psi.Quantity * p.Price) AS Total_Revenue
+FROM
+    PART_SALE_INFO psi
+JOIN
+    PART p ON psi.Part_ID = p.Part_ID
+JOIN
+    PART_CATEGORY pc ON p.Category_ID = pc.Category_ID
+GROUP BY
+    pc.Category_Description
+ORDER BY
+    Total_Revenue DESC;
+
 
 --Top selling parts
 
