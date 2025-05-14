@@ -54,17 +54,21 @@ ORDER BY
   Sales_Month;
 
 -- 4. Retrieve the top three most sold car models.
-SELECT 
-  c.Car_ID,
-  COUNT(csi.Invoice_ID) AS Times_Sold
-FROM 
-  CAR c
-  JOIN CAR_SALE_INFO csi ON c.Car_ID = csi.Car_ID
-GROUP BY 
-  c.Car_ID
-ORDER BY 
-  Times_Sold DESC
-FETCH FIRST 3 ROWS ONLY;
+SELECT * 
+FROM (
+  SELECT 
+    c.Car_ID,
+    COUNT(csi.Invoice_ID) AS Times_Sold
+  FROM 
+    CAR c
+    JOIN CAR_SALE_INFO csi ON c.Car_ID = csi.Car_ID
+  GROUP BY 
+    c.Car_ID
+  ORDER BY 
+    Times_Sold DESC
+)
+WHERE ROWNUM <= 3;
+
 
 -- 5. Calculate the average part price grouped by category.
 SELECT 
