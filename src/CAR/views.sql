@@ -16,14 +16,8 @@ ORDER BY
     Total_Revenue DESC;
 
 
---Top selling parts
-SELECT
-    "PART_ID",
-    "MANUFACTURER_DESCRIPTION",
-    "CATEGORY_DESCRIPTION",
-    "TOTAL_QUANTITY_SOLD",
-    "TOTAL_REVENUE"
-FROM
+--Top 10 selling parts
+SELECT*FROM
     (
         SELECT
             p.Part_ID,

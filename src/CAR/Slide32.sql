@@ -1,4 +1,4 @@
-SELECT "CAR_ID","MANUFACTURER","PRICE","MILEAGE","PRICE_PER_MILE" FROM (
+SELECT * FROM (
     SELECT 
         c.Car_ID,
         cm.Manufacturer_Description AS Manufacturer,
